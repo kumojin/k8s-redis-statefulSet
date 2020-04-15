@@ -50,10 +50,10 @@ spec:
               value: redis-0.redis
             - name: REDIS_SENTINEL
               value: redis-sentinel
-          securityContext:
-            sysctls:
-              - name: net.core.somaxconn
-                value: "512"
+          # securityContext:
+          #   sysctls:
+          #     - name: net.core.somaxconn
+          #       value: "512"
           volumeMounts:
             - name: redis-data
               mountPath: /data
