@@ -1,0 +1,1 @@
+# Redis StatefulSet for Kubernetes

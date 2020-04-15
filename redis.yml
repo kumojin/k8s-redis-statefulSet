@@ -1,0 +1,69 @@
+---
+apiVersion: v1
+kind: Namespace
+metadata:
+  name: redis
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: redis
+  labels:
+    name: redis
+    role: service
+  name: redis
+spec:
+  clusterIP: None
+  ports:
+    - port: 6379
+      targetPort: 6379
+  selector:
+    app: redis
+---
+apiVersion: apps/v1
+kind: StatefulSet
+metadata:
+  name: redis
+  namespace: redis
+spec:
+  selector:
+    matchLabels:
+      app: redis
+  serviceName: redis
+  replicas: 2
+  updateStrategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: redis
+    spec:
+      containers:
+        - name: redis
+          image: kumojin/redis:5.0.8
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 6379
+              name: redis
+          env:
+            - name: REDIS_MASTER
+              value: redis-0.redis
+            - name: REDIS_SENTINEL
+              value: sentinel
+          securityContext:
+            sysctls:
+              - name: net.core.somaxconn
+                value: "512"
+          volumeMounts:
+            - name: redis-data
+              mountPath: /data
+  volumeClaimTemplates:
+    - metadata:
+        name: redis-data
+      spec:
+        storageClassName: redis-storage
+        accessModes:
+          - ReadWriteOnce
+        resources:
+          requests:
+            storage: 20Gi
