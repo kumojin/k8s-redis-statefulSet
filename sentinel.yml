@@ -3,7 +3,7 @@ kind: Service
 metadata:
   namespace: redis
   labels:
-    name: sentinel
+    name: redis-sentinel
     role: service
   name: redis-sentinel
 spec:
@@ -36,7 +36,7 @@ spec:
           - name: REDIS_MASTER
             value: redis-0.redis
           - name: REDIS_SENTINEL
-            value: sentinel
+            value: redis-sentinel
         ports:
           - containerPort: 26379
         volumeMounts:

@@ -49,7 +49,7 @@ spec:
             - name: REDIS_MASTER
               value: redis-0.redis
             - name: REDIS_SENTINEL
-              value: sentinel
+              value: redis-sentinel
           securityContext:
             sysctls:
               - name: net.core.somaxconn
