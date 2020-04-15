@@ -46,10 +46,16 @@ spec:
             - containerPort: 6379
               name: redis
           env:
-            - name: REDIS_MASTER
-              value: redis-0.redis
-            - name: REDIS_SENTINEL
-              value: redis-sentinel
+            - name: MAX_ATTEMPT
+              value: "10"
+          readinessProbe:
+            periodSeconds: 1
+            initialDelaySeconds: 5
+            exec:
+              command:
+                - ash
+                - -c
+                - "redis-cli info replication | grep ^role:master"
           # securityContext:
           #   sysctls:
           #     - name: net.core.somaxconn

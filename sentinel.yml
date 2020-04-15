@@ -12,7 +12,7 @@ spec:
     - port: 26379
       targetPort: 26379
   selector:
-    redis-sentinel: "true"
+    app: redis-sentinel
 ---
 apiVersion: apps/v1
 kind: StatefulSet
@@ -32,24 +32,18 @@ spec:
     spec:
       containers:
       - name: redis-sentinel
-        image: kumojin/redis:sentinel-5.0.8
+        image: kumojin/redis-sentinel:5.0.8
+        imagePullPolicy: Always
         env:
           - name: REDIS_MASTER
-            value: redis-0.redis
+            value: redis.redis
           - name: REDIS_SENTINEL
             value: redis-sentinel
+        readinessProbe:
+          tcpSocket:
+            port: 26379
+          initialDelaySeconds: 15
+          periodSeconds: 20
+      
         ports:
           - containerPort: 26379
-        volumeMounts:
-          - name: redis-sentinel-data
-            mountPath: /data
-  volumeClaimTemplates:
-    - metadata:
-        name: redis-sentinel-data
-      spec:
-        storageClassName: redis-storage
-        accessModes:
-          - ReadWriteOnce
-        resources:
-          requests:
-            storage: 1Gi
